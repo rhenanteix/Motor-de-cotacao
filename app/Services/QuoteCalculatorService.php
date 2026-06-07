@@ -63,9 +63,24 @@ $totalGroup += $subtotal;
 ];
     }
 
+    $discountPercentage = $this->getGroupDiscount(
+        count($data['viajantes'])
+    );
+
+    $totalFinal = $totalGroup * (1 - $discountPercentage);
+
+    $totalFinal = round(
+        $totalFinal,
+        2,
+        PHP_ROUND_HALF_UP
+    );
+
     return [
         'dias_cobrados' => $chargedDays,
         'viajantes' => $travellers,
+        'avisos' => $warnings,
+        'desconto_grupo_percentual' => $discountPercentage * 100,
+        'total_final' => $totalFinal
     ];
 }
 
@@ -105,6 +120,14 @@ private function getAgeMultiplier(int $age): float
 private function getDestinationRate(string $destination): float
 {
     return self::DESTINATION_RATES[$destination];
+}
+
+private function getGroupDiscount(
+    int $travellerCount
+): float {
+   return $travellerCount >= 5
+   ? 0.10
+   : 0.00;
 }
 
 private function calculateBasePrice(
