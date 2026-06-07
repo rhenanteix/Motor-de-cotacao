@@ -11,10 +11,21 @@ class QuoteController extends Controller
         QuoteRequest $request,
         QuoteCalculatorService $service
     ) {
-        return response()->json(
-            $service->calculate(
-                $request->validated()
-            )
+       $result = $service->calculate(
+            $request->validated()
         );
+
+            Quote::create([
+            'request_payload' => $request->validated(),
+            'response_payload' => $result,
+            'total_final' => $result['total_final'],
+        ]);
+
+        return response()->json($result);
+    }
+
+    public function index() 
+    {
+        return Quote::latest()->get();
     }
 }
